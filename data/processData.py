@@ -2,12 +2,12 @@ import os
 import pickle
 import sys
 
-SAVED_DATA_PATH = "saved.pkl"
+SAVED_DATA_PATH = "data/saved.pkl"
 
 def load_UMLS():
     diseases = {}
 
-    g = open("data.txt", 'r')
+    g = open("data/data.txt", 'r')
     f = g.read().replace("\n\n\n\n\n\n\n\n", 'SYMP=').replace("\n\n\n", '_____').split('\n')
     g.close()
 
