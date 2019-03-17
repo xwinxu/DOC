@@ -1,4 +1,4 @@
-from processData import load_UMLS
+from .processData import load_UMLS
 from math import log
 from gensim.models import KeyedVectors
 import numpy as np
@@ -201,8 +201,6 @@ class MVG:
     def create_model(self):
         mapping = load_UMLS()
         self.train(mapping)
-        print(self.predict("I can't sleep and I am exhausted, nausea"))
-        print(self.get_questions())
 
     def get_questions(self):
         best_guesses = []
