@@ -201,8 +201,6 @@ class MVG:
     def create_model(self):
         mapping = load_UMLS()
         self.train(mapping)
-        print(self.predict("I can't sleep and I am exhausted, nausea"))
-        print(self.get_questions())
 
     def get_questions(self):
         best_guesses = []
@@ -248,7 +246,7 @@ Way this works:
 7) Whenever we get a call for it, we can also suggest certain key words for what to ask the patient
     a) calculates where the most additional information is found by analyzing the eigenvalues of the covariance matrices using PCA analysis
     b) It then maps this 'desired' information to healthcare data using word2vec mappings
-    c) It then uses gram_smidt orthogonal mapping to change its predictions/questions it asks dynamically 
+    c) It then uses gram_smidt orthogonal mapping to change its predictions/questions it asks dynamically
 '''
 if __name__ == "__main__":
     m = MVG()
