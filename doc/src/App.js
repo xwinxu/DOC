@@ -2,17 +2,16 @@ import React, { Component } from 'react';
 import "./App.css"
 import "bootstrap"
 import 'bootstrap/dist/css/bootstrap.css'
-import { Mic } from "./recorder.js"
-import "metrics-graphics/dist/metricsgraphics.css"
-import MetricsGraphics from "react-metrics-graphics"
 
+//  .././api.py run from root dir
+// also run npm start
 
+var d3 = require("d3");
 var $ = require("jquery");
 var log = "";
 
 var diseases  = {};
 var UPDATE_TIME = 5000;
-
 
 class App extends Component {
   render() {
@@ -75,13 +74,55 @@ class App extends Component {
 
             </textarea>
           </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div id="graph"></div>
+          </div>
         </div> 
       </div>
     );
   }
 }
 
+var points = []
+var data = {}
+
+// //sort bars based on value
+// data = data.sort(function (a, b) {
+//   return d3.ascending(a.value, b.value);
+// })
+
+// const xAxis = "xAxis";
+// const yAxis = "yAxis";
+// const svg = d3n.createSVG();
+// svg.append("g")
+//   .attr("fill", "steelblue")
+//   .selectAll("rect")
+//   .data(data)
+//   .join("rect")
+//   .attr("x", x(0))
+//   .attr("y", d => y(d.name))
+//   .attr("width", d => x(d.value) - x(0))
+//   .attr("height", y.bandwidth());
+// svg.append("g")
+//   .attr("fill", "white")
+//   .attr("text-anchor", "end")
+//   .style("font", "12px sans-serif")
+//   .selectAll("text")
+//   .data(data)
+//   .join("text")
+//   .attr("x", d => x(d.value) - 4)
+//   .attr("y", d => y(d.name) + y.bandwidth() / 2)
+//   .attr("dy", "0.35em")
+//   .text(d => format(d.value));
+// svg.append("g").call(xAxis);
+// svg.append("g").call(yAxis);
+
+
 $(document).ready(function() {
+  //set up svg using margin conventions - we'll need plenty of room on the left for labels
+
   // tippy("#record-button", {
   //   content: "test", 
   //   onShow(instance) {
@@ -141,15 +182,26 @@ $(document).ready(function() {
     });
 
     $.get("http://127.0.0.1:5000/diseases", function(json) {
-      $("#diagnosis-text").val(json);
+      points = [];
+      var str = "";
+      $.each(json, function (i, text) {
+        str += text + "\n";
+        if (data[text] === undefined) {
+          data[text] = 1;
+        } else {
+          data[text] = data[text] + 1;
+        }
+        $.each(data, function (key, value) {
+          points.push({ "name": key, "value": value });
+        });
+      });
+      $("#diagnosis-text").val(str); 
     });
 
     $.get("http://127.0.0.1:5000/recommendations", function(json) {
-      console.log(json);
       var str = "";
       $.each(json, function (index, text) {
         str += text + "\n";
-        console.log(text);
       });
       $("#rec-text").val(str);
     });
@@ -158,6 +210,77 @@ $(document).ready(function() {
     if ($("#toggle-button").text() === "Doctor Mode") {
       $.post("http://127.0.0.1:5000/senddiagnosis", $("#doctor-text").val().length > 0 ? $("#doctor-text").val() : "EMPTY");
     }
+
+    var margin = {
+      top: 15,
+      right: 25,
+      bottom: 15,
+      left: 200
+    };
+
+    var width = 900 - margin.left - margin.right,
+      height = 400 - margin.top - margin.bottom;
+
+    $("#graph").empty();
+    var svg = d3.select("#graph").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var x = d3.scaleLinear()
+      .range([0, width])
+      .domain([0, d3.max(points, function (d) {
+        return d.value;
+      })]);
+
+    var y = d3.scaleBand()
+      .rangeRound([height, 0])
+      .padding(0.1)
+      .domain(points.map(function (d) {
+        return d.name;
+      }));
+
+    //make y axis to show bar names
+    var yAxis = d3.axisLeft()
+      .scale(y)
+      //no tick marks
+      .tickSize(0);
+
+    var gy = svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+
+    var bars = svg.selectAll(".bar")
+      .data(points)
+      .enter()
+      .append("g")
+
+    //append rects
+    bars.append("rect")
+      .attr("class", "bar")
+      .attr("y", function (d) {
+        return y(d.name);
+      })
+      .attr("height", y.bandwidth())
+      .attr("x", 0)
+      .attr("width", function (d) {
+        return x(d.value);
+      });
+
+    //add a value label to the right of each bar
+    bars.append("text")
+      .attr("class", "label")
+      //y position of the label is halfway down the bar
+      .attr("y", function (d) {
+        return y(d.name) + y.bandwidth() / 2 + 4;
+      })
+      //x position is 3 pixels to the right of the bar
+      .attr("x", function (d) {
+        return x(d.value) + 3;
+      })
+      .text(function (d) {
+        return d.value;
+      });
   }, UPDATE_TIME);
   
 

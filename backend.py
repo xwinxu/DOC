@@ -3,10 +3,36 @@ from flask import request
 import sys, os
 from data import processData
 import json
+import time
 
 app = Flask(__name__)
 
 TRANSCRIPT_PATH = "data/transcript.txt"
+
+
+class Blockchain(object):
+    def __init__(self):
+        self.chain = []
+        self.current_transactions = []
+
+    def new_block(self):
+        # Creates a new Block and adds it to the chain
+        self.chain.append({time.time(): 'geolocation'})
+
+    def new_transaction(self):
+        # Adds a new transaction to the list of transactions
+        pass
+
+    @staticmethod
+    def hash(block):
+        # Hashes a Block
+        pass
+
+    @property
+    def last_block(self):
+        # Returns the last Block in the chain
+        pass
+
 
 @app.route("/load_data")
 def return_data():

@@ -185,9 +185,10 @@ class MVG:
                 print(e)
                 continue
 
-            sentence_outputs.append(y)#* self.output_importance[word[1]])
+            # * self.output_importance[word[1]])
+            sentence_outputs.append(self.output_to_word[np.argmax(y)])
 
-        return self.output_to_word[np.argmax(np.sum(np.array(sentence_outputs), axis=0))]
+        return sentence_outputs
 
     def classify_data(self, x, means, cov):
         y_outputs = []
