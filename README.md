@@ -1,7 +1,9 @@
 # Hack the Globe 2019
 Global Engineering Week hackathon sponsored by Google.org, BCG, and LEAP.
 
-## To run:
+Project received 1st Place Prize.
+
+## To run DOC:
 1. Start the flask server from inside model/ for Gaussian model dependency: `python app.py`
 2. Start the node server: `npm start`
 
@@ -10,4 +12,3 @@ Doctors in rural areas are outnumbered by the population in need of medical prof
 
 ## Team Details:
 Quinlan Sykora, Winnie Xu, Ziyad Edher, Vida Pourhashem
-1st Place Prize
