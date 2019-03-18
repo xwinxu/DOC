@@ -1,4 +1,4 @@
-# Hack the Globe 2019
+# DOC: A Digital Healthcare Consultant | Hack the Globe 2019
 Global Engineering Week hackathon sponsored by Google.org, BCG, and LEAP.
 
 Project received 1st Place Prize.
